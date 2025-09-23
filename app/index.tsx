@@ -1,5 +1,7 @@
 import { Text, View } from "react-native";
 import Signin from "./Components/Signin";
+import AddTask from "./Components/AddTask";
+import Task from "./Components/Task";
 
 export default function Index() {
   return (
@@ -10,7 +12,11 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Signin />
+            {/* <AddTask />
+      <Task title="Ma première tâche" />
+      <Signin /> */}
     </View>
   );
 }
+
+

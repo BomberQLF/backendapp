@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 20,
         justifyContent: 'center',
-        backgroundColor: '#bcb8b8ff',
+        backgroundColor: '#cbc8c899',
         borderRadius: 16,
     },
     title: {

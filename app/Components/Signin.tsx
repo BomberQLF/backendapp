@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 
 export default function Signin() {
     const [email, setEmail] = useState('');
@@ -29,10 +29,11 @@ export default function Signin() {
     };
 
     return (
+        <>
         <View style={styles.container}>
-            <Text style={styles.title}>Connexion</Text>
             
-            {error ? (
+            <Text style={styles.title}>Connexion</Text>
+                        {error ? (
                 <View style={styles.errorContainer}>
                     <Text style={styles.errorText}>{error}</Text>
                 </View>
@@ -59,24 +60,24 @@ export default function Signin() {
                 />
 
             <TouchableOpacity 
-                style={[styles.button, isLoading && styles.buttonDisabled]}
+                style={[styles.buttonConnexion, isLoading && styles.buttonDisabled]}
                 onPress={handleSignIn}
                 disabled={isLoading}
             >
-                <Text style={styles.buttonText}>
-                    {isLoading ? 'Connexion...' : 'Se connecter'}
-                </Text>
+                <Text style={styles.buttonText}>Se connecter</Text>
             </TouchableOpacity>
         </View>
+        </>
     );
 }
 
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 20,
         justifyContent: 'center',
+        backgroundColor: '#bcb8b8ff',
+        borderRadius: 16,
     },
     title: {
         fontSize: 32,
@@ -101,40 +102,39 @@ const styles = StyleSheet.create({
         padding: 12,
         fontSize: 16,
         backgroundColor: '#fff',
+        width: 250,
     },
-    button: {
-        backgroundColor: '#007AFF',
+    buttonConnexion: {
+        backgroundColor: '#1100ffff',
         borderRadius: 8,
         padding: 16,
         alignItems: 'center',
         marginTop: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     buttonDisabled: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#59ff00ff',
     },
     buttonText: {
-        color: '#fff',
+        color: '#ffffffff',
         fontSize: 16,
-        fontWeight: '600',
-    },
-    linkButton: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    linkText: {
-        color: '#007AFF',
-        fontSize: 14,
+        fontWeight: 'bold',
     },
     errorContainer: {
-        backgroundColor: '#ffebee',
-        borderColor: '#f44336',
+        backgroundColor: '#ffffffff',
+        borderColor: '#ff1100ff',
         borderWidth: 1,
         borderRadius: 8,
         padding: 12,
         marginBottom: 20,
+        width: 250,
     },
     errorText: {
-        color: '#d32f2f',
+        color: '#ff1100ff',
         fontSize: 14,
         textAlign: 'center',
     },

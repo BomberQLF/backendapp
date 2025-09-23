@@ -3,13 +3,20 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-nativ
 
 export default function Signup() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = () => {
     console.log({
       'Utilisateur': username,
-      'Mot de passe': password
+      'Email': email,
+      'Mot de passe': password,
+      'Confirmation du MDP:': confirmPassword
     });
+    if (password !== confirmPassword) {
+      // On envoie pas les données
+    }
     // Ajouter la logique ici
   };
 
@@ -26,10 +33,28 @@ export default function Signup() {
 
       <TextInput
         style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      <TextInput
+        style={styles.input}
         placeholder="Mot de passe"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Confirmer le mot de passe"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSignup}>

@@ -12,9 +12,14 @@ export default function Index() {
         alignItems: "center",
       }}
     >
+
+
+
+
+      
             {/* <AddTask />
-      <Task title="Ma première tâche" />
-      <Signin /> */}
+      <Task title="Ma première tâche" /> */}
+      {/* <Signin /> */}
     </View>
   );
 }

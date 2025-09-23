@@ -10,7 +10,7 @@ export default function Task({ title }) {
                 <TouchableOpacity
                     style={[styles.checkbox, { backgroundColor: isChecked ? '#007AFF' : '#ccc', borderColor: isChecked ? '#007AFF' : '#ccc' }]}
                     onPress={() => setIsChecked(!isChecked)}
-                    >
+                >
                     {isChecked && (
                         <Text style={styles.checkboxText}>
                             ✓
@@ -18,12 +18,8 @@ export default function Task({ title }) {
                     )}
                 </TouchableOpacity>
 
-                <Text style={{
-                    flex: 1,
-                    fontSize: 16,
-                    textDecorationLine: isChecked ? 'line-through' : 'none',
-                    color: isChecked ? '#999' : '#333'
-                }}>
+                <Text style={[styles.TaskText,{ textDecorationLine: isChecked ? 'line-through' : 'none', color: isChecked ? '#999' : '#333'}]}>
+
                     {title}
                 </Text>
             </View>
@@ -50,6 +46,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     checkboxText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+    TaskText: {
+        flex: 1,
+        fontSize: 16,
+    },
 
 
 })

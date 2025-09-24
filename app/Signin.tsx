@@ -5,13 +5,17 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Button
 } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSignIn = async () => {
     // Validation des champs
@@ -63,6 +67,13 @@ export default function Signin() {
           secureTextEntry
           autoCapitalize="none"
         />
+
+        <TouchableOpacity
+          
+          style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
+        >
+          <Button title="Créer un compte" onPress={() => router.push('/Signup')}></Button>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.buttonConnexion]}

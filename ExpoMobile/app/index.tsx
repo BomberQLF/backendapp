@@ -15,8 +15,8 @@ export default function Index() {
       }}
     >
       <TaskList />
-      {/* <Signup /> */}
-      {/* <Signin /> */}
+      {/* <Signup />
+      <Signin /> */}
     </View>
   );
 }

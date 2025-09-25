@@ -21,9 +21,15 @@ export default function TaskList() {
   };
 
   // mettre à jour l'état local après modification
-const handleStatusChange = (id, completed, deleted = false) => {
+const handleStatusChange = (id, completed, deleted = false, newTitle) => {
   if (deleted) {
     setTasks(tasks => tasks.filter(task => task._id !== id));
+  } else if (newTitle !== undefined) {
+    setTasks(tasks =>
+      tasks.map(task =>
+        task._id === id ? { ...task, title: newTitle } : task
+      )
+    );
   } else {
     setTasks(tasks =>
       tasks.map(task =>

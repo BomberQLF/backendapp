@@ -2,7 +2,8 @@ import { Text, View } from "react-native";
 import Signup from "./Signup";
 import Signin from "./Signin";
 import AddTask from "./AddTask";
-import Task from "./Task";
+import Task from "./task";
+import TaskList from "./TaskList";
 
 export default function Index() {
   return (
@@ -13,11 +14,9 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-            {/* <AddTask  />
-      <Task title={"test de tâche"} /> */}
-      {/* <Signin /> */}
+      <TaskList />
       {/* <Signup /> */}
-      <Signin />
+      {/* <Signin /> */}
     </View>
   );
 }

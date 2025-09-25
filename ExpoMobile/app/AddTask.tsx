@@ -1,30 +1,49 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 
-export default function AddTask() {
+
+export default function AddTask({ onTaskAdded }: { onTaskAdded?: () => void }) {
     const [Task, setTask] = useState('');
+    const [error, setError] = useState<string | null>(null);
+
+    const handleAddTask = async () => {
+        setError(null);
+        const response = await fetch('http://localhost:3000/task', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: Task }),
+        });
+        const data = await response.json();
+        if (!data.ok) {
+            setError(data.error || 'Erreur');
+            return;
+        }
+        setTask('');
+        if (onTaskAdded) onTaskAdded();
+    };
 
     return (
         <>
-        <View style={styles.containerParent}>
-        <View style={styles.container}>
+            <View style={styles.containerParent}>
+                <View style={styles.container}>
 
-                <Text style={styles.label}>Tâche</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Entrez votre Tâche"
-                    value={Task}
-                    onChangeText={setTask}
-                    autoCapitalize="none"
-                />
+                    <Text style={styles.label}>Tâche</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Entrez votre Tâche"
+                        value={Task}
+                        onChangeText={setTask}
+                        autoCapitalize="none"
+                    />
 
-            <TouchableOpacity 
-                style={styles.buttonConnexion}
-            >
-                <Text style={styles.buttonText}>Ajouter</Text>
-            </TouchableOpacity>
-        </View>
-        </View>
+                    <TouchableOpacity
+                        style={styles.buttonConnexion}
+                        onPress={handleAddTask}
+                    >
+                        <Text style={styles.buttonText}>Ajouter</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </>
     );
 }
@@ -96,4 +115,8 @@ const styles = StyleSheet.create({
     },
 });
 
+
+// function setError(arg0: null) {
+//     throw new Error('Function not implemented.');
+// }
 // expo router

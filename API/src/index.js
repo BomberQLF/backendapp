@@ -13,10 +13,11 @@ app.use(cors({ credentials: true, origin: "*" }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-require("./services/passport")(app);
+// require("./services/passport")(app);
 
 app.use("/user", require("./controllers/user"));
-
+app.use("/task", require("./controllers/task"));
+app.use("/list", require("./controllers/list"));
 // ...
 
 app.get("/", (req, res) => {

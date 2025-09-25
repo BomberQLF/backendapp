@@ -126,12 +126,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     backgroundColor: "#ffffffff",
     borderColor: "#ff1100ff",
-    // borderWidth: 1,
-    // borderRadius: 8,
-    // padding: 12,
-    // marginBottom: 20,
-    // width: 250,
-        borderWidth: 1,
+    borderWidth: 1,
     padding: 10,
     borderRadius: 8,
     marginBottom: 15,

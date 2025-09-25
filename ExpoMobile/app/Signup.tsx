@@ -12,8 +12,7 @@ export default function Signup() {
 
   const router = useRouter();
 
-  const handleSignup = () => {
-    // Validation des champs
+  const handleSignup = async () => {
     if (!username || !email || !password || !confirmPassword) {
       setError("Veuillez remplir tous les champs");
       return;
@@ -33,77 +32,91 @@ export default function Signup() {
     setError("");
     setIsLoading(true);
 
-    // Envoie des données au back
-
+    // Envoie des données au backend
+    const response = await fetch("http://localhost:3000/user/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        username,
+      }),
+    });
+    const data = await response.json();
+    if (!data.ok) {
+      setError(data.message || "Erreur lors de l'inscription");
+    } else {
+      router.push("/"); // Redirige vers la page d'accueil ou de connexion
+    }
     setIsLoading(false);
   };
 
   return (
-        <View style={styles.containerParent}>
-    <View style={styles.container}>
-      <Text style={styles.title}>Créer un compte</Text>
-      {error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      ) : null}
+    <View style={styles.containerParent}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Créer un compte</Text>
+        {error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
 
-      <Text style={styles.label}>Nom d'utilisateur</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nom d'utilisateur"
-        value={username}
-        onChangeText={setUsername}
-      />
+        <Text style={styles.label}>Nom d'utilisateur</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChangeText={setUsername}
+        />
 
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
 
-      <Text style={styles.label}>Mot de passe</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Mot de passe"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <Text style={styles.label}>Mot de passe</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Mot de passe"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <Text style={styles.label}>Confirmer le mot de passe</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmer le mot de passe"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+        <Text style={styles.label}>Confirmer le mot de passe</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirmer le mot de passe"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
 
-      <TouchableOpacity
-        style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
-      >
-        <Button title="Se connecter" onPress={() => router.push('/')}></Button>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
+        >
+          <Button title="Se connecter" onPress={() => router.push('/')}></Button>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup} disabled={isLoading}>
-        <Text style={styles.buttonText}>S'inscrire</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={handleSignup} disabled={isLoading}>
+          <Text style={styles.buttonText}>S'inscrire</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    containerParent: {
-            flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+  containerParent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     width: "60%",

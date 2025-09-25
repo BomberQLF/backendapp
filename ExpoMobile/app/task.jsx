@@ -22,7 +22,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
         await fetch(`http://localhost:3000/task/${_id}`, {
             method: 'DELETE',
         });
-        if (onStatusChange) onStatusChange(_id, null, true); // true pour indiquer la suppression
+        if (onStatusChange) onStatusChange(_id, null, true); 
     };
 
      const handleSaveEdit = async () => {

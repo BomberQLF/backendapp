@@ -4,16 +4,12 @@ const MODELNAME = "user";
 
 const Schema = new mongoose.Schema(
   {
-    email: { type: String, unique: true, required: true, trim: true },
-    first_name: { type: String, trim: true },
-    last_name: { type: String, trim: true },
-    password: String,
-    last_login_at: { type: Date, default: Date.now },
+  email: { type: String, required: true, unique: true, trim: true },
+  password: { type: String, required: true },
+  username: { type: String, required: true }
   },
   { timestamps: true }
 );
-
-//...
 
 const OBJ = mongoose.model(MODELNAME, Schema);
 module.exports = OBJ;

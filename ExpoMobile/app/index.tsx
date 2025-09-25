@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import Signup from "./Signup";
 import Signin from "./Signin";
 import AddTask from "./AddTask";
-import Task from "./task";
+import Task from "./Task";
 
 export default function Index() {
   return (

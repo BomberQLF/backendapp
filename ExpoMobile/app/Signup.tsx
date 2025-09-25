@@ -39,6 +39,7 @@ export default function Signup() {
   };
 
   return (
+        <View style={styles.containerParent}>
     <View style={styles.container}>
       <Text style={styles.title}>Créer un compte</Text>
       {error ? (
@@ -87,17 +88,23 @@ export default function Signup() {
       <TouchableOpacity
         style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
       >
-        <Button title="Se connecter" onPress={() => router.push('/Signin')}></Button>
+        <Button title="Se connecter" onPress={() => router.push('/')}></Button>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={handleSignup} disabled={isLoading}>
         <Text style={styles.buttonText}>S'inscrire</Text>
       </TouchableOpacity>
     </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+    containerParent: {
+            flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+  },
   container: {
     width: "60%",
     padding: 20,

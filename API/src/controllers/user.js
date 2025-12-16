@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+const SECRET = process.env.JWT_SECRET || "votre-clé-secrète";
 
 // Route d'inscription
 router.post("/signup", async (req, res) => {
@@ -9,7 +12,6 @@ router.post("/signup", async (req, res) => {
   if (!email || !password || !username) {
     return res.status(400).send({ ok: false, message: "Champs manquants" });
   }
-  try {
     // Vérifie si l'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -20,9 +22,23 @@ router.post("/signup", async (req, res) => {
     // Crée l'utilisateur avec le mot de passe hashé
     const user = await User.create({ email, password: hashedPassword, username });
     return res.status(201).send({ ok: true, data: user });
-  } catch (error) {
-    return res.status(500).send({ ok: false, message: "Erreur serveur" });
+});
+
+router.post("/signin", async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).send({ ok: false, message: "Champs manquants" });
   }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).send({ ok: false, message: "Email ou mot de passe incorrect" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send({ ok: false, message: "Email ou mot de passe incorrect" });
+    }
+    const token = jwt.sign({ _id: user._id }, SECRET);
+    return res.status(200).send({ ok: true, token, user: { email: user.email, username: user.username } });
 });
 
 module.exports = router;

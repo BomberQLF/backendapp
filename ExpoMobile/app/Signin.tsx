@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Button
+  Button,
 } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -36,6 +36,29 @@ export default function Signin() {
 
     setIsLoading(true);
     setError("");
+
+    // Envoie des données au backend
+      const response = await fetch("http://localhost:3000/user/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!data.ok) {
+        // Email ou mot de passe incorrect
+        setError(data.message || "Erreur lors de la connexion");
+        setIsLoading(false);
+      } else {
+        // Connexion réussie, redirection vers TaskList
+        setIsLoading(false);
+        router.push("/TaskList");
+      }
+      setIsLoading(false);
   };
 
   return (
@@ -69,10 +92,12 @@ export default function Signin() {
         />
 
         <TouchableOpacity
-          
-          style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
+          style={{ marginBottom: 20, marginTop: 10, alignSelf: "flex-end" }}
         >
-          <Button title="Créer un compte" onPress={() => router.push('/Signup')}></Button>
+          <Button
+            title="Créer un compte"
+            onPress={() => router.push("/Signup")}
+          ></Button>
         </TouchableOpacity>
 
         <TouchableOpacity

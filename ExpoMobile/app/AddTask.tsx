@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function AddTask({ onTaskAdded }: { onTaskAdded?: () => void }) {
@@ -8,9 +9,20 @@ export default function AddTask({ onTaskAdded }: { onTaskAdded?: () => void }) {
 
     const handleAddTask = async () => {
         setError(null);
+        
+        // Récupérer le token depuis AsyncStorage
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            setError('Non authentifié');
+            return;
+        }
+
         const response = await fetch('http://localhost:3000/task', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ title: Task }),
         });
         const data = await response.json();
@@ -114,9 +126,3 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
-
-// function setError(arg0: null) {
-//     throw new Error('Function not implemented.');
-// }
-// expo router

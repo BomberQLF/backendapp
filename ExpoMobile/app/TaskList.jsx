@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from './task';
 import AddTask from './AddTask';
 
@@ -7,7 +8,17 @@ export default function TaskList() {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async () => {
-    const response = await fetch('http://localhost:3000/task');
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+
+    const response = await fetch('http://localhost:3000/task', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     const data = await response.json();
     if (data.ok) setTasks(data.data);
   };

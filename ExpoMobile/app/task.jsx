@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet,TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Task({ _id, title, completed = false, onStatusChange }) {
     const [isChecked, setIsChecked] = useState(completed);
@@ -9,9 +10,13 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
 
     const handleCheck = async () => {
         setIsChecked(!isChecked);
+        const token = await AsyncStorage.getItem('userToken');
         await fetch(`http://localhost:3000/task/${_id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ completed: !isChecked }),
         });
         if (onStatusChange) onStatusChange(_id, !isChecked);
@@ -19,16 +24,24 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
 
     // Bouton supprimer
     const handleDelete = async () => {
+        const token = await AsyncStorage.getItem('userToken');
         await fetch(`http://localhost:3000/task/${_id}`, {
             method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            },
         });
         if (onStatusChange) onStatusChange(_id, null, true); 
     };
 
      const handleSaveEdit = async () => {
+        const token = await AsyncStorage.getItem('userToken');
         await fetch(`http://localhost:3000/task/${_id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({ title: editValue }),
         });
         setIsEditing(false);

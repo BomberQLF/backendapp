@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet,TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from './config';
 
 export default function Task({ _id, title, completed = false, onStatusChange }) {
     const [isChecked, setIsChecked] = useState(completed);
@@ -11,7 +12,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
     const handleCheck = async () => {
         setIsChecked(!isChecked);
         const token = await AsyncStorage.getItem('userToken');
-        await fetch(`http://localhost:3000/task/${_id}`, {
+        await fetch(`${API_URL}/task/${_id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -25,7 +26,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
     // Bouton supprimer
     const handleDelete = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        await fetch(`http://localhost:3000/task/${_id}`, {
+        await fetch(`${API_URL}/task/${_id}`, {
             method: 'DELETE',
             headers: { 
                 'Authorization': `Bearer ${token}`
@@ -36,7 +37,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
 
      const handleSaveEdit = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        await fetch(`http://localhost:3000/task/${_id}`, {
+        await fetch(`${API_URL}/task/${_id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -100,50 +101,64 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 20,
+        marginBottom: 0,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 8
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#efefef',
+        borderRadius: 0,
+        minHeight: 56,
     },
     checkbox: {
-        width: 24,
-        height: 24,
+        width: 20,
+        height: 20,
         borderWidth: 2,
-        borderRadius: 4,
-        marginRight: 10,
+        borderRadius: 2,
+        marginRight: 12,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderColor: '#d0d0d0',
+        backgroundColor: '#ffffff',
+        flexShrink: 0,
     },
-    checkboxText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+    checkboxText: { 
+        color: '#ffffff', 
+        fontSize: 14, 
+        fontWeight: 'bold' 
+    },
     TaskText: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 15,
+        color: '#333333',
+        fontWeight: '400',
+        letterSpacing: 0.3,
     },
     deleteButton: {
-        marginLeft: 10,
-        padding: 6,
+        marginLeft: 8,
+        padding: 8,
         borderRadius: 4,
-        backgroundColor: '#ff4d4d',
+        backgroundColor: 'transparent',
         alignItems: 'center',
         justifyContent: 'center',
+        flexShrink: 0,
     },
     deleteButtonText: {
-        color: 'white',
-        fontSize: 16,
+        fontSize: 18,
     },
     editButton: {
-        marginLeft: 5,
-        padding: 6,
+        marginLeft: 4,
+        padding: 8,
         borderRadius: 4,
-        backgroundColor: '#ffd700',
+        backgroundColor: 'transparent',
         alignItems: 'center',
         justifyContent: 'center',
+        flexShrink: 0,
     },
     editButtonText: {
-        color: '#333',
-        fontSize: 16,
+        fontSize: 18,
     },
 });

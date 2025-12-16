@@ -9,18 +9,18 @@ router.post("/", authenticateToken, async (req, res) => {
     const userId = req.user._id;
 
     if (!name) {
-      return res.status(400).send({ ok: false, error: "Le nom est requis" });
+      return res.send({ ok: false, error: "Le nom est requis" });
     }
 
     const list = await List.create({ name, user: userId });
-    res.status(201).send({ ok: true, data: list });
+    res.send({ ok: true, data: list });
 });
 
 // Récupérer les listes de l'utilisateur connecté
 router.get("/", authenticateToken, async (req, res) => {
     const userId = req.user._id;
     const lists = await List.find({ user: userId });
-    res.status(200).send({ ok: true, data: lists });
+    res.send({ ok: true, data: lists });
 });
 
 // Mettre à jour une liste (vérifier que l'utilisateur est propriétaire)
@@ -29,15 +29,15 @@ router.put("/:id", authenticateToken, async (req, res) => {
     const list = await List.findById(req.params.id);
 
     if (!list) {
-      return res.status(404).send({ ok: false, error: "Liste non trouvée" });
+      return res.send({ ok: false, error: "Liste non trouvée" });
     }
 
     if (list.user.toString() !== userId.toString()) {
-      return res.status(403).send({ ok: false, error: "Accès non autorisé" });
+      return res.send({ ok: false, error: "Accès non autorisé" });
     }
 
     const updatedList = await List.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.status(200).send({ ok: true, data: updatedList });
+    res.send({ ok: true, data: updatedList });
 });
 
 // Supprimer une liste (vérifier que l'utilisateur est propriétaire)
@@ -46,15 +46,15 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     const list = await List.findById(req.params.id);
 
     if (!list) {
-      return res.status(404).send({ ok: false, error: "Liste non trouvée" });
+      return res.send({ ok: false, error: "Liste non trouvée" });
     }
 
     if (list.user.toString() !== userId.toString()) {
-      return res.status(403).send({ ok: false, error: "Accès non autorisé" });
+      return res.send({ ok: false, error: "Accès non autorisé" });
     }
 
     await List.findByIdAndDelete(req.params.id);
-    res.status(200).send({ ok: true });
+    res.send({ ok: true });
 });
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button } from "react-native";
 import { useRouter } from "expo-router";
+import { API_URL } from './config';
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -33,7 +34,7 @@ export default function Signup() {
     setIsLoading(true);
 
     // Envoie des données au backend
-    const response = await fetch("http://localhost:3000/user/signup", {
+    const response = await fetch(`${API_URL}/user/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

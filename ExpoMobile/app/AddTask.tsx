@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from './config';
 //utilisation de AsyncStorage pour stocker le token utilisateur
 
 
@@ -18,7 +19,7 @@ export default function AddTask({ onTaskAdded }: { onTaskAdded?: () => void }) {
             return;
         }
 
-        const response = await fetch('http://localhost:3000/task', {
+        const response = await fetch(`${config.API_URL}/task`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

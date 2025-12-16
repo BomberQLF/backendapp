@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import config from "./config";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ export default function Signin() {
     setError("");
 
     // Envoie des données au backend
-      const response = await fetch("http://localhost:3000/user/signin", {
+      const response = await fetch(`localhost:3000/user/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet,TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from './config';
 
 export default function Task({ _id, title, completed = false, onStatusChange }) {
     const [isChecked, setIsChecked] = useState(completed);
@@ -25,7 +26,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
     // Bouton supprimer
     const handleDelete = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        await fetch(`http://localhost:3000/task/${_id}`, {
+        await fetch(`localhost:3000/task/${_id}`, {
             method: 'DELETE',
             headers: { 
                 'Authorization': `Bearer ${token}`
@@ -36,7 +37,7 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
 
      const handleSaveEdit = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        await fetch(`http://localhost:3000/task/${_id}`, {
+        await fetch(`localhost:3000/task/${_id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',

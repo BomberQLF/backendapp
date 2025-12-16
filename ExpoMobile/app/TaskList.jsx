@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from './config';
+import { API_URL } from './config';
 import Task from './task';
 import AddTask from './AddTask';
 import UserConnect from './userconnect';
@@ -16,7 +16,7 @@ export default function TaskList() {
       return;
     }
 
-    const response = await fetch(`localhost:3000/task`, {
+    const response = await fetch(`${API_URL}/task`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

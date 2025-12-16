@@ -3,6 +3,7 @@ import { View, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from './task';
 import AddTask from './AddTask';
+import UserConnect from './userconnect';
 
 export default function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -51,6 +52,7 @@ const handleStatusChange = (id, completed, deleted = false, newTitle) => {
 };
   return (
     <View style={{ flex: 1, padding: 20 }}>
+            <UserConnect />
       <AddTask onTaskAdded={handleTaskAdded} />
       <ScrollView>
         {tasks.map((task) => (

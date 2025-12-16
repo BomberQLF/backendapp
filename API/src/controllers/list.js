@@ -1,45 +1,60 @@
 const express = require("express");
 const router = express.Router();
 const List = require("../models/list");
+const { authenticateToken } = require("../middleware/auth");
 
-// Créer une liste
-router.post("/", async (req, res) => {
-  try {
-    const list = await List.create(req.body);
+// Créer une liste (utilisateur connecté uniquement)
+router.post("/", authenticateToken, async (req, res) => {
+    const { name } = req.body;
+    const userId = req.user._id;
+
+    if (!name) {
+      return res.status(400).send({ ok: false, error: "Le nom est requis" });
+    }
+
+    const list = await List.create({ name, user: userId });
     res.status(201).send({ ok: true, data: list });
-  } catch (error) {
-    res.status(400).send({ ok: false, error });
-  }
 });
 
-// Récupérer toutes les listes
-router.get("/", async (req, res) => {
-  try {
-    const lists = await List.find();
+// Récupérer les listes de l'utilisateur connecté
+router.get("/", authenticateToken, async (req, res) => {
+    const userId = req.user._id;
+    const lists = await List.find({ user: userId });
     res.status(200).send({ ok: true, data: lists });
-  } catch (error) {
-    res.status(500).send({ ok: false, error });
-  }
 });
 
-// Mettre à jour une liste
-router.put("/:id", async (req, res) => {
-  try {
-    const list = await List.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.status(200).send({ ok: true, data: list });
-  } catch (error) {
-    res.status(400).send({ ok: false, error });
-  }
+// Mettre à jour une liste (vérifier que l'utilisateur est propriétaire)
+router.put("/:id", authenticateToken, async (req, res) => {
+    const userId = req.user._id;
+    const list = await List.findById(req.params.id);
+
+    if (!list) {
+      return res.status(404).send({ ok: false, error: "Liste non trouvée" });
+    }
+
+    if (list.user.toString() !== userId.toString()) {
+      return res.status(403).send({ ok: false, error: "Accès non autorisé" });
+    }
+
+    const updatedList = await List.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).send({ ok: true, data: updatedList });
 });
 
-// Supprimer une liste
-router.delete("/:id", async (req, res) => {
-  try {
+// Supprimer une liste (vérifier que l'utilisateur est propriétaire)
+router.delete("/:id", authenticateToken, async (req, res) => {
+    const userId = req.user._id;
+    const list = await List.findById(req.params.id);
+
+    if (!list) {
+      return res.status(404).send({ ok: false, error: "Liste non trouvée" });
+    }
+
+    if (list.user.toString() !== userId.toString()) {
+      return res.status(403).send({ ok: false, error: "Accès non autorisé" });
+    }
+
     await List.findByIdAndDelete(req.params.id);
     res.status(200).send({ ok: true });
-  } catch (error) {
-    res.status(400).send({ ok: false, error });
-  }
 });
 
 module.exports = router;

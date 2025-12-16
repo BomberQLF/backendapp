@@ -8,6 +8,7 @@ import {
   Button,
 } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
@@ -54,6 +55,9 @@ export default function Signin() {
         setError(data.message || "Erreur lors de la connexion");
         setIsLoading(false);
       } else {
+        // Stocker le token dans AsyncStorage
+        await AsyncStorage.setItem("userToken", data.token);
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
         // Connexion réussie, redirection vers TaskList
         setIsLoading(false);
         router.push("/TaskList");

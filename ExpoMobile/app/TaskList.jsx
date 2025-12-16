@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from './task';
 import AddTask from './AddTask';
@@ -51,7 +51,8 @@ const handleStatusChange = (id, completed, deleted = false, newTitle) => {
   }
 };
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <>
+ <View style={{ flex: 1, padding: 20 }}>
             <UserConnect />
       <AddTask onTaskAdded={handleTaskAdded} />
       <ScrollView>
@@ -66,5 +67,26 @@ const handleStatusChange = (id, completed, deleted = false, newTitle) => {
         ))}
       </ScrollView>
     </View>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8e8e8',
+  },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  tasksContainer: {
+    flexGrow: 1,
+  },
+});

@@ -55,7 +55,7 @@ export default function TaskList() {
   };
 
   useEffect(() => {
-    fetchLists(); 
+    fetchLists();
   }, []);
 
   //animation slide down
@@ -84,7 +84,9 @@ export default function TaskList() {
 
   const handleStatusChange = (id, completed, deleted = false, newTitle) => {
     if (deleted) {
+      // On met à jour l'état 'tasks' en supprimant la tâche 
       setTasks(tasks => tasks.filter(task => task._id !== id));
+      // modification du titre de la tache
     } else if (newTitle !== undefined) {
       setTasks(tasks =>
         tasks.map(task =>
@@ -92,6 +94,7 @@ export default function TaskList() {
         )
       );
     } else {
+      // mise a jout du statut de la tache
       setTasks(tasks =>
         tasks.map(task =>
           task._id === id ? { ...task, completed } : task
@@ -134,7 +137,7 @@ export default function TaskList() {
 
       {/* Header avec les catégories en bulles  */}
       <View style={styles.header}>
-              <UserConnect />
+        <UserConnect />
         <Text style={styles.headerTitle}>Mes listes</Text>
         <ScrollView
           horizontal
@@ -196,86 +199,89 @@ export default function TaskList() {
         </View>
       )}
 
-      {selectedList ? (
-        <View style={styles.mainContent}>
-          {totalCount > 0 && (
-            <View style={styles.statsCard}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{totalCount}</Text>
-                <Text style={styles.statLabel}>Total</Text>
+      <ScrollView>
+        {selectedList ? (
+          <View style={styles.mainContent}>
+            {totalCount > 0 && (
+              <View style={styles.statsCard}>
+                <View style={styles.statItem}>
+                  <Text style={styles.statNumber}>{totalCount}</Text>
+                  <Text style={styles.statLabel}>Total</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                  <Text style={styles.statNumber}>{completedCount}</Text>
+                  <Text style={styles.statLabel}>Terminées</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                  <Text style={styles.statNumber}>{totalCount - completedCount}</Text>
+                  <Text style={styles.statLabel}>Restantes</Text>
+                </View>
               </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{completedCount}</Text>
-                <Text style={styles.statLabel}>Terminées</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{totalCount - completedCount}</Text>
-                <Text style={styles.statLabel}>Restantes</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Formulaire ajout de tâche */}
-          <AddTask onTaskAdded={handleTaskAdded} listId={selectedList} />
-
-          {/* Liste des tâches */}
-          <ScrollView
-            style={styles.tasksScrollView}
-            contentContainerStyle={styles.tasksContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {tasks.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyEmoji}>📝</Text>
-                <Text style={styles.emptyStateText}>Aucune tâche</Text>
-              </View>
-            ) : (
-              <>
-                {/* Tâches non terminées */}
-                {tasks.filter(t => !t.completed).length > 0 && (
-                  <View style={styles.taskSection}>
-                    <Text style={styles.sectionTitle}>À faire</Text>
-                    {tasks.filter(t => !t.completed).map((task) => (
-                      <Task
-                        key={task._id}
-                        _id={task._id}
-                        title={task.title}
-                        completed={task.completed}
-                        onStatusChange={handleStatusChange}
-                      />
-                    ))}
-                  </View>
-                )}
-
-                {/* Tâches terminées */}
-                {tasks.filter(t => t.completed).length > 0 && (
-                  <View style={styles.taskSection}>
-                    <Text style={styles.sectionTitle}>
-                      Terminées ({tasks.filter(t => t.completed).length})
-                    </Text>
-                    {tasks.filter(t => t.completed).map((task) => (
-                      <Task
-                        key={task._id}
-                        _id={task._id}
-                        title={task.title}
-                        completed={task.completed}
-                        onStatusChange={handleStatusChange}
-                      />
-                    ))}
-                  </View>
-                )}
-              </>
             )}
-          </ScrollView>
-        </View>
-      ) : (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>📋</Text>
-          <Text style={styles.emptyStateText}>Créez votre première liste</Text>
-        </View>
-      )}
+
+            {/* Formulaire ajout de tâche */}
+            <AddTask onTaskAdded={handleTaskAdded} listId={selectedList} />
+
+            {/* Liste des tâches */}
+            <ScrollView
+              style={styles.tasksScrollView}
+              contentContainerStyle={styles.tasksContent}
+              showsVerticalScrollIndicator={false}
+            >
+              {tasks.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyEmoji}>📝</Text>
+                  <Text style={styles.emptyStateText}>Aucune tâche</Text>
+                </View>
+              ) : (
+                <>
+                  {/* Tâches non terminées */}
+                  {tasks.filter(t => !t.completed).length > 0 && (
+                    <View style={styles.taskSection}>
+                      <Text style={styles.sectionTitle}>À faire</Text>
+                      {tasks.filter(t => !t.completed).map((task) => (
+                        <Task
+                          key={task._id}
+                          _id={task._id}
+                          title={task.title}
+                          completed={task.completed}
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))}
+                    </View>
+                  )}
+
+                  {/* Tâches terminées */}
+                  {tasks.filter(t => t.completed).length > 0 && (
+                    <View style={styles.taskSection}>
+                      <Text style={styles.sectionTitle}>
+                        Terminées ({tasks.filter(t => t.completed).length})
+                      </Text>
+                      {tasks.filter(t => t.completed).map((task) => (
+                        <Task
+                          key={task._id}
+                          _id={task._id}
+                          title={task.title}
+                          completed={task.completed}
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              )}
+            </ScrollView>
+          </View>
+
+        ) : (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>📋</Text>
+            <Text style={styles.emptyStateText}>Créez votre première liste</Text>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }

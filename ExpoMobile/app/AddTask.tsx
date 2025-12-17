@@ -1,136 +1,130 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "./config";
-//utilisation de AsyncStorage pour stocker le token utilisateur
 
-export default function AddTask({ onTaskAdded }: { onTaskAdded?: () => void }) {
-  const [Task, setTask] = useState("");
+//utilisation de AsyncStorage pour stocker le token utilisateur
+export default function AddTask({ onTaskAdded, listId }: { onTaskAdded?: () => void, listId?: string }) {
+  const [task, setTask] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleAddTask = async () => {
     setError(null);
 
-    // Récupérer le token depuis AsyncStorage
     const token = await AsyncStorage.getItem("userToken");
     if (!token) {
       setError("Non authentifié");
       return;
     }
 
-    const response = await fetch(`${API_URL}/task`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title: Task }),
-    });
-    const data = await response.json();
-    if (!data.ok) {
-      setError(data.error || "Erreur");
-      return;
-    }
-    setTask("");
-    if (onTaskAdded) onTaskAdded();
+      const response = await fetch(`${API_URL}/task`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: task, list: listId }),
+      });
+      
+      const data = await response.json();
+      if (!data.ok) {
+        setError(data.error || "Erreur");
+        return;
+      }
+      
+      setTask("");
+      if (onTaskAdded) onTaskAdded();
   };
 
   return (
-    <>
-      <View style={styles.containerParent}>
-        <View style={styles.container}>
-          <Text style={styles.label}>Tâche</Text>
+    <View style={styles.container}>
+      <View style={styles.inputWrapper}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputIcon}>✨</Text>
           <TextInput
             style={styles.input}
-            placeholder="Entrez votre Tâche"
-            value={Task}
+            placeholder="Nouvelle tâche..."
+            placeholderTextColor="#AAAAAA"
+            value={task}
             onChangeText={setTask}
-            autoCapitalize="none"
+            multiline
+            onSubmitEditing={handleAddTask}
           />
-
-          <TouchableOpacity
-            style={[styles.buttonConnexion, !Task && styles.buttonDisabled]}
-            onPress={handleAddTask}
-            disabled={!Task}
-          >
-            <Text style={styles.buttonText}>Ajouter</Text>
-          </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[styles.addButton, (!task) && styles.addButtonDisabled]}
+          onPress={handleAddTask}
+          disabled={!task}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 }
 
-
 const styles = StyleSheet.create({
-  containerParent: {
-    display: "flex",
-    justifyContent: "flex-start",
-    marginTop: 0,
-    marginBottom: 0,
-  },
   container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 16,
-    justifyContent: "center",
-    backgroundColor: "#ffffff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e8e8e8",
-    borderRadius: 0,
+    backgroundColor: '#FAFBFC',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   inputContainer: {
-    marginBottom: 20,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
-  label: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginBottom: 8,
-    color: "#666666",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+  inputIcon: {
+    fontSize: 20,
+    marginRight: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#d0d0d0",
-    borderRadius: 4,
-    padding: 12,
-    fontSize: 15,
-    backgroundColor: "#f9f9f9",
-    color: "#333333",
-    fontWeight: "400",
+    flex: 1,
+    fontSize: 16,
+    color: '#1A1A1A',
+    fontWeight: '500',
+    paddingVertical: 4,
+    maxHeight: 100,
   },
-  buttonConnexion: {
-    backgroundColor: "#0078d4",
-    borderRadius: 4,
-    padding: 12,
-    alignItems: "center",
-    marginTop: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
+  addButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  buttonDisabled: {
-    backgroundColor: "#d0d0d0",
+  addButtonDisabled: {
+    backgroundColor: '#E0E0E0',
+    shadowOpacity: 0,
   },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  errorContainer: {
-    backgroundColor: "#fdeef1",
-    borderColor: "#d13438",
-    borderLeftWidth: 3,
-    borderRadius: 2,
-    padding: 12,
-    marginBottom: 20,
-  },
-  errorText: {
-    color: "#d13438",
-    fontSize: 14,
-    textAlign: "left",
-    fontWeight: "500",
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '300',
+    marginTop: -2,
   },
 });

@@ -57,4 +57,13 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     res.send({ ok: true });
 });
 
+// Dans le fichier task controller, ajoutez cette route
+router.get("/by-list/:listId", authenticateToken, async (req, res) => {
+    const userId = req.user._id;
+    const { listId } = req.params;
+    
+    const tasks = await Task.find({ user: userId, list: listId }).populate("list");
+    res.send({ ok: true, data: tasks });
+});
+
 module.exports = router;

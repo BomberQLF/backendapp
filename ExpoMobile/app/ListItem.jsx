@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect ,} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './config';
@@ -6,6 +6,15 @@ import { API_URL } from './config';
 export default function ListItem({ _id, name, onListChange }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(name);
+      const [showActions, setShowActions] = useState(false);
+
+      // Mettre à jour le nom de la liste si les on choisis une autre liste
+        useEffect(() => {
+        setEditValue(name);
+        setShowActions(false);
+        setIsEditing(false);
+    }, [name, _id]);
+
 
     const handleDelete = async () => {
         const token = await AsyncStorage.getItem('userToken');

@@ -4,13 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './config';
 
 export default function AddList({ onListAdded }: { onListAdded?: () => void }) {
-    const [name, setname] = useState('');
+    const [name, setName] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const handleAddList = async () => {
         setError(null);
-        
-        // Récupérer le token depuis AsyncStorage
+        // recupérer le token utilisateur depuis AsyncStorage
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
             setError('Non authentifié');
@@ -33,109 +32,109 @@ export default function AddList({ onListAdded }: { onListAdded?: () => void }) {
                 return;
             }
             
-            setname('');
+            setName('');
             if (onListAdded) onListAdded();
     };
 
     return (
-        <View style={styles.containerParent}>
-            <View style={styles.container}>
-                <Text style={styles.label}>Nom de la liste</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Entrez le nom de votre liste"
-                    value={name}
-                    onChangeText={setname}
-                    autoCapitalize="words"
-                />
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <View style={styles.header}>
+                    <Text style={styles.headerIcon}>📁</Text>
+                    <Text style={styles.headerText}>Nouvelle catégorie</Text>
+                </View>
 
-                {error && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{error}</Text>
-                    </View>
-                )}
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nom de la catégorie..."
+                        placeholderTextColor="#AAAAAA"
+                        value={name}
+                        onChangeText={setName}
+                        autoCapitalize="words"
+                        onSubmitEditing={handleAddList}
+                    />
+                </View>
 
-                <TouchableOpacity
-                    style={[styles.buttonConnexion, !name && styles.buttonDisabled]}
-                    onPress={handleAddList}
-                    disabled={!name}
-                >
-                    <Text style={styles.buttonText}>Créer la liste</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={[styles.button, (!name) && styles.buttonDisabled]}
+                        onPress={handleAddList}
+                        disabled={!name}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.buttonText}>
+                        Créer la catégorie
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    containerParent: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        marginTop: 0,
-        marginBottom: 0,
-    },
     container: {
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        justifyContent: 'center',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FFFFFF',
         borderBottomWidth: 1,
-        borderBottomColor: '#e8e8e8',
-        borderRadius: 0,
+        borderBottomColor: '#F0F0F0',
+    },
+    content: {
+        paddingHorizontal: 20,
+        paddingVertical: 20,
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    headerIcon: {
+        fontSize: 24,
+        marginRight: 8,
+    },
+    headerText: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#1A1A1A',
+        letterSpacing: -0.3,
     },
     inputContainer: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 12,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#666666',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
+        marginBottom: 16,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#d0d0d0',
-        borderRadius: 4,
-        padding: 12,
-        fontSize: 15,
-        backgroundColor: '#f9f9f9',
-        color: '#333333',
-        fontWeight: '400',
+        backgroundColor: '#F8F9FA',
+        borderRadius: 12,
+        padding: 16,
+        fontSize: 16,
+        color: '#1A1A1A',
+        fontWeight: '500',
+        borderWidth: 2,
+        borderColor: '#F0F0F0',
     },
-    buttonConnexion: {
-        backgroundColor: '#0078d4',
-        borderRadius: 4,
-        padding: 12,
+    buttonContainer: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    button: {
+        flex: 1,
+        backgroundColor: '#007AFF',
+        borderRadius: 12,
+        padding: 16,
         alignItems: 'center',
-        marginTop: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.08,
-        shadowRadius: 2,
-        elevation: 2,
+        shadowColor: '#007AFF',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 3,
     },
     buttonDisabled: {
-        backgroundColor: '#d0d0d0',
+        backgroundColor: '#E0E0E0',
+        shadowOpacity: 0,
     },
     buttonText: {
-        color: '#ffffff',
-        fontSize: 15,
-        fontWeight: '600',
-    },
-    errorContainer: {
-        backgroundColor: '#fdeef1',
-        borderColor: '#d13438',
-        borderLeftWidth: 3,
-        borderRadius: 2,
-        padding: 12,
-        marginBottom: 20,
-    },
-    errorText: {
-        color: '#d13438',
-        fontSize: 14,
-        textAlign: 'left',
-        fontWeight: '500',
-    },
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.3,
+    }
 });

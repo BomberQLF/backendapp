@@ -5,6 +5,7 @@ import { API_URL } from './config';
 import Task from './task';
 import AddTask from './AddTask';
 import UserConnect from './userconnect';
+import AddList from './AddList';
 
 export default function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -55,7 +56,9 @@ const handleStatusChange = (id, completed, deleted = false, newTitle) => {
     <>
  <View style={{ flex: 1, padding: 20 }}>
             <UserConnect />
+            <AddList onListAdded={fetchTasks} />
       <AddTask onTaskAdded={handleTaskAdded} />
+      
       <ScrollView>
         {tasks.map((task) => (
           <Task

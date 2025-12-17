@@ -1,0 +1,141 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from './config';
+
+export default function AddList({ onListAdded }: { onListAdded?: () => void }) {
+    const [name, setname] = useState('');
+    const [error, setError] = useState<string | null>(null);
+
+    const handleAddList = async () => {
+        setError(null);
+        
+        // Récupérer le token depuis AsyncStorage
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+            setError('Non authentifié');
+            return;
+        }
+
+            const response = await fetch(`${API_URL}/list`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ name }),
+            });
+            
+            const data = await response.json();
+            
+            if (!data.ok) {
+                setError(data.error || 'Erreur lors de la création de la liste');
+                return;
+            }
+            
+            setname('');
+            if (onListAdded) onListAdded();
+    };
+
+    return (
+        <View style={styles.containerParent}>
+            <View style={styles.container}>
+                <Text style={styles.label}>Nom de la liste</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Entrez le nom de votre liste"
+                    value={name}
+                    onChangeText={setname}
+                    autoCapitalize="words"
+                />
+
+                {error && (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                )}
+
+                <TouchableOpacity
+                    style={[styles.buttonConnexion, !name && styles.buttonDisabled]}
+                    onPress={handleAddList}
+                    disabled={!name}
+                >
+                    <Text style={styles.buttonText}>Créer la liste</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    containerParent: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        marginTop: 0,
+        marginBottom: 0,
+    },
+    container: {
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e8e8e8',
+        borderRadius: 0,
+    },
+    inputContainer: {
+        marginBottom: 20,
+    },
+    label: {
+        fontSize: 12,
+        fontWeight: '600',
+        marginBottom: 8,
+        color: '#666666',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#d0d0d0',
+        borderRadius: 4,
+        padding: 12,
+        fontSize: 15,
+        backgroundColor: '#f9f9f9',
+        color: '#333333',
+        fontWeight: '400',
+    },
+    buttonConnexion: {
+        backgroundColor: '#0078d4',
+        borderRadius: 4,
+        padding: 12,
+        alignItems: 'center',
+        marginTop: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    buttonDisabled: {
+        backgroundColor: '#d0d0d0',
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 15,
+        fontWeight: '600',
+    },
+    errorContainer: {
+        backgroundColor: '#fdeef1',
+        borderColor: '#d13438',
+        borderLeftWidth: 3,
+        borderRadius: 2,
+        padding: 12,
+        marginBottom: 20,
+    },
+    errorText: {
+        color: '#d13438',
+        fontSize: 14,
+        textAlign: 'left',
+        fontWeight: '500',
+    },
+});

@@ -1,7 +1,19 @@
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { useRouter } from "expo-router";
-import { API_URL } from './config';
+import { API_URL } from "./config";
+import ErrorMessage from "./components/error";
+import Logo from "./components/logo";
+import { styles } from "./components/logindesign";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -53,127 +65,327 @@ export default function Signup() {
   };
 
   return (
-    <View style={styles.containerParent}>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Logo />
+
+      {/* Carte d'inscription */}
       <View style={styles.container}>
-        <Text style={styles.title}>Créer un compte</Text>
-        {error ? (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
+        {/* En-tête */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Créer un compte</Text>
+          <Text style={styles.subtitle}>Commencez à organiser vos tâches</Text>
+        </View>
+
+        <ErrorMessage message={error} />
+
+        {/* Formulaire */}
+        <View style={styles.form}>
+          {/* Champ Nom d'utilisateur */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Nom d'utilisateur</Text>
+            <View style={[styles.inputContainer, styles.inputContainerFocused]}>
+              <Text style={styles.inputIcon}>👤</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Pseudonyme"
+                placeholderTextColor="#AAAAAA"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
           </View>
-        ) : null}
 
-        <Text style={styles.label}>Nom d'utilisateur</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Nom d'utilisateur"
-          value={username}
-          onChangeText={setUsername}
-        />
+          {/* Champ Email */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+            <View style={[styles.inputContainer, styles.inputContainerFocused]}>
+              <Text style={styles.inputIcon}>📧</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="votre@email.com"
+                placeholderTextColor="#AAAAAA"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+          </View>
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+          {/* Champ Mot de passe */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mot de passe</Text>
+            <View style={[styles.inputContainer, styles.inputContainerFocused]}>
+              <Text style={styles.inputIcon}>🔒</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="******"
+                placeholderTextColor="#AAAAAA"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
 
-        <Text style={styles.label}>Mot de passe</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+          {/* Champ Confirmer mot de passe */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Confirmer le mot de passe</Text>
+            <View style={[styles.inputContainer, styles.inputContainerFocused]}>
+              <Text style={styles.inputIcon}>🔐</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="******"
+                placeholderTextColor="#AAAAAA"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
 
-        <Text style={styles.label}>Confirmer le mot de passe</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Confirmer le mot de passe"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
+          {/* Bouton d'inscription */}
+          <TouchableOpacity
+            style={[styles.buttonConnexion]}
+            onPress={handleSignup}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonText}>Créer mon compte</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={{ marginBottom: 20, marginTop: 10, alignSelf: 'flex-end' }}
-        >
-          <Button title="Se connecter" onPress={() => router.push('/')}></Button>
-        </TouchableOpacity>
+          {/* Lien vers connexion */}
 
-        <TouchableOpacity style={styles.button} onPress={handleSignup} disabled={isLoading}>
-          <Text style={styles.buttonText}>S'inscrire</Text>
-        </TouchableOpacity>
+          <View style={styles.signupSection}>
+            <Text style={styles.signupText}>Déjà un compte ?</Text>
+            <TouchableOpacity onPress={() => router.push("/Signin")}>
+              <Text style={styles.signupLink}>Se connecter</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </View>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Fait par Nicolas et Tom
+        </Text>
+      </View>
+    </ScrollView>
   );
 }
+//   wrapper: {
+//     flex: 1,
+//     backgroundColor: '#FAFBFC',
+//   },
 
-const styles = StyleSheet.create({
-  containerParent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    width: "60%",
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 8,
-    color: "#333",
-  },
-  title: {
-    paddingTop: 20,
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 15,
-    width: "100%",
-  },
-  button: {
-    backgroundColor: "#000",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    width: "100%",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  errorContainer: {
-    backgroundColor: "#fff",
-    borderColor: "#ff1100ff",
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 15,
-    width: "100%",
-  },
-  errorText: {
-    color: "#ff1100ff",
-    fontSize: 14,
-    textAlign: "center",
-  },
-});
+//   scrollContent: {
+//     flexGrow: 1,
+//     justifyContent: 'center',
+//     paddingHorizontal: 20,
+//     paddingVertical: 40,
+//   },
+
+//   decorativeHeader: {
+//     alignItems: 'center',
+//     marginBottom: 32,
+//     position: 'relative',
+//     height: 120,
+//     justifyContent: 'center',
+//   },
+
+//   decorativeCircle1: {
+//     position: 'absolute',
+//     width: 100,
+//     height: 100,
+//     borderRadius: 50,
+//     backgroundColor: '#E5FFE5',
+//     top: 0,
+//     left: '20%',
+//     opacity: 0.6,
+//   },
+
+//   decorativeCircle2: {
+//     position: 'absolute',
+//     width: 80,
+//     height: 80,
+//     borderRadius: 40,
+//     backgroundColor: '#FFF4E5',
+//     top: 20,
+//     right: '25%',
+//     opacity: 0.6,
+//   },
+
+//   logoEmoji: {
+//     fontSize: 64,
+//     zIndex: 1,
+//   },
+
+//   container: {
+//     backgroundColor: '#FFFFFF',
+//     borderRadius: 24,
+//     padding: 28,
+//     shadowColor: '#000',
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 16,
+//     elevation: 8,
+//     maxWidth: 500,
+//     width: '100%',
+//     alignSelf: 'center',
+//   },
+
+//   header: {
+//     marginBottom: 28,
+//     alignItems: 'center',
+//   },
+
+//   title: {
+//     fontSize: 32,
+//     fontWeight: '800',
+//     color: '#1A1A1A',
+//     marginBottom: 8,
+//     letterSpacing: -0.5,
+//   },
+
+//   subtitle: {
+//     fontSize: 15,
+//     color: '#999999',
+//     fontWeight: '500',
+//     letterSpacing: 0.2,
+//   },
+
+//   errorContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#FFE5E5',
+//     borderRadius: 12,
+//     padding: 14,
+//     marginBottom: 20,
+//     borderLeftWidth: 4,
+//     borderLeftColor: '#FF6B9D',
+//   },
+
+//   errorIcon: {
+//     fontSize: 20,
+//     marginRight: 10,
+//   },
+
+//   errorText: {
+//     flex: 1,
+//     color: '#D13438',
+//     fontSize: 14,
+//     fontWeight: '600',
+//     letterSpacing: 0.2,
+//   },
+
+//   form: {
+//     width: '100%',
+//   },
+
+//   inputGroup: {
+//     marginBottom: 20,
+//   },
+
+//   label: {
+//     fontSize: 14,
+//     fontWeight: '700',
+//     color: '#1A1A1A',
+//     marginBottom: 8,
+//     letterSpacing: 0.3,
+//     textTransform: 'uppercase',
+//   },
+
+//   inputContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#F8F9FA',
+//     borderRadius: 12,
+//     paddingHorizontal: 16,
+//     paddingVertical: 4,
+//     borderWidth: 2,
+//     borderColor: '#F0F0F0',
+//   },
+
+//   inputContainerFocused: {
+//     borderColor: '#FF6B9D',
+//     backgroundColor: '#FFFFFF',
+//     shadowColor: '#FF6B9D',
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 8,
+//     elevation: 2,
+//   },
+
+//   inputIcon: {
+//     fontSize: 20,
+//     marginRight: 12,
+//   },
+
+//   input: {
+//     flex: 1,
+//     fontSize: 16,
+//     color: '#1A1A1A',
+//     fontWeight: '500',
+//     paddingVertical: 12,
+//   },
+
+//   buttonConnexion: {
+//     backgroundColor: '#FF6B9D',
+//     borderRadius: 12,
+//     paddingVertical: 16,
+//     alignItems: 'center',
+//     marginTop: 8,
+//     shadowColor: '#FF6B9D',
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 12,
+//     elevation: 6,
+//   },
+
+//   buttonConnexionDisabled: {
+//     backgroundColor: '#E0E0E0',
+//     shadowOpacity: 0,
+//   },
+
+//   buttonText: {
+//     color: '#FFFFFF',
+//     fontWeight: '700',
+//     fontSize: 17,
+//     letterSpacing: 0.5,
+//   },
+
+//   signinSection: {
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     marginTop: 24,
+//     gap: 6,
+//   },
+
+//   signinText: {
+//     fontSize: 15,
+//     color: '#666666',
+//     fontWeight: '500',
+//   },
+
+//   signinLink: {
+//     fontSize: 15,
+//     color: '#FF6B9D',
+//     fontWeight: '700',
+//     letterSpacing: 0.2,
+//   },
+
+//   footer: {
+//     marginTop: 32,
+//     alignItems: 'center',
+//   },
+
+//   footerText: {
+//     fontSize: 13,
+//     color: '#AAAAAA',
+//     fontWeight: '500',
+//     letterSpacing: 0.5,
+//   },
+// });

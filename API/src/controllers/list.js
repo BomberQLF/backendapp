@@ -1,18 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const List = require("../models/list");
+const Task = require("../models/task"); // Ajoutez cette ligne
 const { authenticateToken } = require("../middleware/auth");
 
 // Créer une liste (utilisateur connecté uniquement)
 router.post("/", authenticateToken, async (req, res) => {
-    const { name } = req.body;
+    const { name  } = req.body;
     const userId = req.user._id;
 
     if (!name) {
       return res.send({ ok: false, error: "Le nom est requis" });
     }
 
-    const list = await List.create({ name, user: userId });
+    const list = await List.create({name, user: userId });
     res.send({ ok: true, data: list });
 });
 
@@ -53,7 +54,12 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       return res.send({ ok: false, error: "Accès non autorisé" });
     }
 
+    // Supprimer toutes les tâches associées à cette liste
+    await Task.deleteMany({ list: req.params.id, user: userId });
+    
+    // Supprimer la liste
     await List.findByIdAndDelete(req.params.id);
+    
     res.send({ ok: true });
 });
 

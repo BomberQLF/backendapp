@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet,TextInput } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './config';
 
@@ -8,8 +8,45 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(title);
 
+    // Animations
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const checkAnim = useRef(new Animated.Value(completed ? 1 : 0)).current;
+    const slideAnim = useRef(new Animated.Value(0)).current;
+
+    // Animation d'entrée
+    useEffect(() => {
+        Animated.spring(slideAnim, {
+            toValue: 1,
+            tension: 50,
+            friction: 7,
+            useNativeDriver: true,
+        }).start();
+    }, []);
 
     const handleCheck = async () => {
+        // Animation du check
+        Animated.sequence([
+            Animated.spring(scaleAnim, {
+                toValue: 0.9,
+                tension: 100,
+                friction: 3,
+                useNativeDriver: true,
+            }),
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                tension: 100,
+                friction: 3,
+                useNativeDriver: true,
+            }),
+        ]).start();
+
+        Animated.spring(checkAnim, {
+            toValue: isChecked ? 0 : 1,
+            tension: 80,
+            friction: 5,
+            useNativeDriver: true,
+        }).start();
+
         setIsChecked(!isChecked);
         const token = await AsyncStorage.getItem('userToken');
         await fetch(`${API_URL}/task/${_id}`, {
@@ -23,8 +60,15 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
         if (onStatusChange) onStatusChange(_id, !isChecked);
     };
 
-    // Bouton supprimer
     const handleDelete = async () => {
+        Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+        }).start(() => {
+            if (onStatusChange) onStatusChange(_id, null, true);
+        });
+
         const token = await AsyncStorage.getItem('userToken');
         await fetch(`${API_URL}/task/${_id}`, {
             method: 'DELETE',
@@ -32,10 +76,9 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
                 'Authorization': `Bearer ${token}`
             },
         });
-        if (onStatusChange) onStatusChange(_id, null, true); 
     };
 
-     const handleSaveEdit = async () => {
+    const handleSaveEdit = async () => {
         const token = await AsyncStorage.getItem('userToken');
         await fetch(`${API_URL}/task/${_id}`, {
             method: 'PUT',
@@ -50,115 +93,181 @@ export default function Task({ _id, title, completed = false, onStatusChange }) 
     };
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity
-                style={[
-                    styles.checkbox,
-                    { backgroundColor: isChecked ? '#007AFF' : '#ccc', borderColor: isChecked ? '#007AFF' : '#ccc' }
-                ]}
-                onPress={handleCheck}
-            >
-                {isChecked && (
-                    <Text style={styles.checkboxText}>
-                        ✓
-                    </Text>
-                )}
-            </TouchableOpacity>
+        <Animated.View style={[
+            styles.container,
+            {
+                opacity: slideAnim,
+                transform: [{
+                    translateX: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-50, 0]
+                    })
+                }]
+            }
+        ]}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <TouchableOpacity
+                    style={[styles.checkbox, isChecked && styles.checkboxChecked]}
+                    onPress={handleCheck}
+                    activeOpacity={0.7}
+                >
+                    <Animated.View style={[
+                        styles.checkIcon,
+                        {
+                            opacity: checkAnim,
+                            transform: [{
+                                scale: checkAnim.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.3, 1]
+                                })
+                            }]
+                        }
+                    ]}>
+                        <Text style={styles.checkIconText}>✓</Text>
+                    </Animated.View>
+                </TouchableOpacity>
+            </Animated.View>
 
             {isEditing ? (
                 <TextInput
-                    style={[styles.TaskText, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 4, paddingHorizontal: 4 }]}
+                    style={styles.input}
                     value={editValue}
                     onChangeText={setEditValue}
                     onSubmitEditing={handleSaveEdit}
                     autoFocus
                 />
             ) : (
-                <Text style={[
-                    styles.TaskText,
-                    { textDecorationLine: isChecked ? 'line-through' : 'none', color: isChecked ? '#999' : '#333' }
-                ]}>
-                    {editValue}
-                </Text>
-            )}
-
-            {isEditing ? (
-                <TouchableOpacity style={styles.editButton} onPress={handleSaveEdit}>
-                    <Text style={styles.editButtonText}>💾</Text>
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.editButton} onPress={() => setIsEditing(true)}>
-                    <Text style={styles.editButtonText}>✏️</Text>
+                <TouchableOpacity 
+                    style={styles.textContainer}
+                    onPress={() => setIsEditing(true)}
+                    activeOpacity={0.7}
+                >
+                    <Text style={[
+                        styles.taskText,
+                        isChecked && styles.taskTextCompleted
+                    ]}>
+                        {editValue}
+                    </Text>
                 </TouchableOpacity>
             )}
 
-            <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-                <Text style={styles.deleteButtonText}>🗑️</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.actions}>
+                {!isEditing && (
+                    <TouchableOpacity 
+                        style={styles.actionButton}
+                        onPress={() => setIsEditing(true)}
+                        activeOpacity={0.6}
+                    >
+                        <View style={styles.iconCircle}>
+                            <Text style={styles.actionIcon}>✏️</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+
+                <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={handleDelete}
+                    activeOpacity={0.6}
+                >
+                    <View style={[styles.iconCircle, styles.iconCircleDelete]}>
+                        <Text style={styles.actionIcon}>🗑️</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </Animated.View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 0,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        backgroundColor: '#ffffff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#efefef',
-        borderRadius: 0,
-        minHeight: 56,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        marginHorizontal: 20,
+        marginVertical: 6,
+        padding: 16,
+        borderRadius: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        elevation: 2,
+        minHeight: 64,
     },
     checkbox: {
-        width: 20,
-        height: 20,
-        borderWidth: 2,
-        borderRadius: 2,
-        marginRight: 12,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        borderWidth: 2.5,
+        borderColor: '#E0E0E0',
+        backgroundColor: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: '#d0d0d0',
-        backgroundColor: '#ffffff',
-        flexShrink: 0,
+        marginRight: 14,
     },
-    checkboxText: { 
-        color: '#ffffff', 
-        fontSize: 14, 
-        fontWeight: 'bold' 
+    checkboxChecked: {
+        backgroundColor: '#007AFF',
+        borderColor: '#007AFF',
     },
-    TaskText: {
+    checkIcon: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    checkIconText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '900',
+    },
+    textContainer: {
         flex: 1,
-        fontSize: 15,
-        color: '#333333',
+        paddingRight: 8,
+    },
+    taskText: {
+        fontSize: 16,
+        color: '#1A1A1A',
+        fontWeight: '500',
+        lineHeight: 22,
+        letterSpacing: 0.2,
+    },
+    taskTextCompleted: {
+        textDecorationLine: 'line-through',
+        color: '#AAAAAA',
         fontWeight: '400',
-        letterSpacing: 0.3,
     },
-    deleteButton: {
-        marginLeft: 8,
-        padding: 8,
-        borderRadius: 4,
-        backgroundColor: 'transparent',
+    input: {
+        flex: 1,
+        fontSize: 16,
+        color: '#1A1A1A',
+        fontWeight: '500',
+        lineHeight: 22,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: '#F8F9FA',
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: '#007AFF',
+        marginRight: 8,
+    },
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    actionButton: {
+        padding: 4,
+    },
+    iconCircle: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#F8F9FA',
         alignItems: 'center',
         justifyContent: 'center',
-        flexShrink: 0,
     },
-    deleteButtonText: {
-        fontSize: 18,
+    iconCircleDelete: {
+        backgroundColor: '#007AFF',
     },
-    editButton: {
-        marginLeft: 4,
-        padding: 8,
-        borderRadius: 4,
-        backgroundColor: 'transparent',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-    },
-    editButtonText: {
-        fontSize: 18,
+    actionIcon: {
+        fontSize: 16,
     },
 });

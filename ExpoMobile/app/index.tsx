@@ -15,9 +15,6 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      {/* <UserConnect /> */}
-      {/* <TaskList /> */}
-      {/* <Signup /> */}
       <Signin />
     </View>
   );

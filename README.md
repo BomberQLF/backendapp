@@ -53,7 +53,7 @@ npm run dev
 
 ---
 
-### 🔧 Lancer l’API (Backend)
+### 🔧 Lancer l’APPLI TO DO LIST (FrontEnd)
 
 ```bash
 cd backend/ExpoMobile

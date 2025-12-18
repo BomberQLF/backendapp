@@ -50,6 +50,8 @@ cd backend/api
 npm install
 npm run dev
 
+---
+
 ### 🔧 Lancer l’API (Backend)
 
 ```bash

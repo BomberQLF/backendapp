@@ -38,8 +38,8 @@ Elle intègre un système complet **d’inscription et de connexion**, ainsi qu�
 ### 📂 Prérequis
 
 - Node.js
-- npm ou yarn
-- Expo CLI
+- npm
+- Expo Go
 
 ---
 

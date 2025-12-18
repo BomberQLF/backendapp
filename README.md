@@ -40,7 +40,7 @@ Elle intègre un système complet **d’inscription et de connexion**, ainsi qu�
 - Node.js
 - npm
 - Expo Go
-
+- MongoDB
 ---
 
 ### 🔧 Lancer l’API (Backend)

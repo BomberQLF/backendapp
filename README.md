@@ -49,6 +49,7 @@ Elle intègre un système complet **d’inscription et de connexion**, ainsi qu�
 cd backend/api
 npm install
 npm run dev
+```
 
 ---
 
@@ -58,7 +59,7 @@ npm run dev
 cd backend/ExpoMobile
 npx expo start ou
 npx expo start --tunnel
-
+```
 
 ## 👤 Auteur
 
